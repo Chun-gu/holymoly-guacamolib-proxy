@@ -20,7 +20,7 @@ export async function handler(event) {
         "Access-Control-Allow-Methods": "*",
       },
     };
-
+  console.log(path, rawQuery);
   const httpsAgent = new https.Agent({
     rejectUnauthorized: false,
   });
@@ -37,7 +37,7 @@ export async function handler(event) {
     const { status, ok, headers } = response;
     const resJson = await response.json();
     const body = JSON.stringify(resJson);
-
+    console.log("status", status, "ok", ok, "body", body);
     headers["Access-Control-Allow-Origin"] = "*";
     return {
       statusCode: status,
