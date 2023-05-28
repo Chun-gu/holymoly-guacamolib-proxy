@@ -50,7 +50,7 @@ export async function handler(event) {
       body,
     };
   } catch (err) {
-    // console.log(err);
+    console.log('============ERROR============',err);
     return {
       statusCode: 404,
       statusText: err.message,
