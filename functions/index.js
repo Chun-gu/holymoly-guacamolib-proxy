@@ -2,6 +2,7 @@ import https from "https";
 import fetch from "node-fetch";
 
 export async function handler(event) {
+  // console.log(event);
   const {
     path,
     headers: { authorization },
@@ -9,7 +10,7 @@ export async function handler(event) {
     body: requestBody,
     rawQuery,
   } = event;
-
+  console.log('==============================requestBody==========================',requestBody);
   if (httpMethod === "OPTIONS")
     return {
       statusCode: 200,
@@ -20,25 +21,28 @@ export async function handler(event) {
         "Access-Control-Allow-Methods": "*",
       },
     };
-  console.log(path, rawQuery);
-  const httpsAgent = new https.Agent({
-    rejectUnauthorized: false,
-  });
+
+  // const httpsAgent = new https.Agent({
+  //   rejectUnauthorized: false,
+  // });
+  console.log(`${process.env.API_URL}${path}?${rawQuery}`);
   try {
     const response = await fetch(`${process.env.API_URL}${path}?${rawQuery}`, {
-      agent: httpsAgent,
+      // agent: httpsAgent,
       method: httpMethod,
       headers: {
-        Authorization: authorization,
+        // Authorization: authorization,
         "Content-type": "application/json",
       },
       body: requestBody,
     });
     const { status, ok, headers } = response;
     const resJson = await response.json();
+    // console.log(resJson)
     const body = JSON.stringify(resJson);
-    console.log("status", status, "ok", ok, "body", body);
     headers["Access-Control-Allow-Origin"] = "*";
+    headers["content-type"] = "application/json;charset=UTF-8";
+    // console.log(headers);
     return {
       statusCode: status,
       ok,
@@ -46,6 +50,7 @@ export async function handler(event) {
       body,
     };
   } catch (err) {
+    // console.log(err);
     return {
       statusCode: 404,
       statusText: err.message,
