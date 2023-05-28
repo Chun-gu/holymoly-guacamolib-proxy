@@ -10,7 +10,10 @@ export async function handler(event) {
     body: requestBody,
     rawQuery,
   } = event;
-  console.log('==============================requestBody==========================',requestBody);
+  console.log(
+    "==============================requestBody==========================",
+    requestBody
+  );
   if (httpMethod === "OPTIONS")
     return {
       statusCode: 200,
@@ -27,15 +30,16 @@ export async function handler(event) {
   // });
   console.log(`${process.env.API_URL}${path}?${rawQuery}`);
   try {
-    const response = await fetch(`${process.env.API_URL}${path}?${rawQuery}`, {
-      // agent: httpsAgent,
+    let payload = {
       method: httpMethod,
-      headers: {
-        // Authorization: authorization,
-        "Content-type": "application/json",
-      },
-      body: requestBody,
-    });
+      headers: { "content-type": "application/json" },
+    };
+    if (httpMethod !== "GET" && httpMethod !== "HEAD")
+      payload = { ...payload, body: requestBody };
+    const response = await fetch(
+      `${process.env.API_URL}${path}?${rawQuery}`,
+      payload
+    );
     const { status, ok, headers } = response;
     const resJson = await response.json();
     // console.log(resJson)
@@ -50,7 +54,7 @@ export async function handler(event) {
       body,
     };
   } catch (err) {
-    console.log('============ERROR============',err);
+    console.log("============ERROR============", err);
     return {
       statusCode: 404,
       statusText: err.message,
